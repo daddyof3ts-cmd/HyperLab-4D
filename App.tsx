@@ -109,18 +109,26 @@ const App: React.FC = () => {
     if (!morphPlaying || keyframes.length < 2) return;
 
     let rafId = 0;
-    const startTime = performance.now();
-    const segMs = morphDuration * 1000;
+    let startTime: number | null = null;
+    const segMs = Math.max(100, morphDuration * 1000);
+    const count = keyframes.length;
 
     const step = (now: number) => {
-      const elapsed = now - startTime;
-      const totalCycle = segMs * keyframes.length;
+      if (startTime === null) {
+        startTime = now;
+      }
+      const elapsed = Math.max(0, now - startTime);
+      const totalCycle = segMs * count;
       const pos = (elapsed % totalCycle) / segMs;
-      const idxA = Math.floor(pos) % keyframes.length;
-      const idxB = (idxA + 1) % keyframes.length;
-      const frac = pos - Math.floor(pos);
+      const idxA = Math.floor(pos) % count;
+      const idxB = (idxA + 1) % count;
+      const frac = Math.max(0, Math.min(1, pos - Math.floor(pos)));
 
-      setParams(lerpParams(keyframes[idxA].params, keyframes[idxB].params, frac));
+      const kfA = keyframes[idxA];
+      const kfB = keyframes[idxB];
+      if (kfA && kfB) {
+        setParams(lerpParams(kfA.params, kfB.params, frac));
+      }
       rafId = requestAnimationFrame(step);
     };
 
