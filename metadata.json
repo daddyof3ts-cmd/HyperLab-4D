@@ -1,0 +1,6 @@
+{
+  "name": "OmniScope: HyperLab (4D)",
+  "description": "A 4D Quaternion Julia Set visualizer using WebGL raymarching and React.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
